@@ -1,0 +1,54 @@
+# Coolify SSL Configuration Fix
+# This file helps resolve SSL certificate issues
+
+# SSL Configuration Options for Coolify:
+
+# Option 1: Disable Force HTTPS (Temporary Fix)
+# In Coolify Dashboard:
+# 1. Go to your backend application
+# 2. Navigate to "Domains" section
+# 3. Uncheck "Force HTTPS" temporarily
+# 4. Save and redeploy
+
+# Option 2: Configure SSL properly
+# In Coolify Dashboard:
+# 1. Go to "Domains" section
+# 2. Ensure SSL certificate is properly generated
+# 3. Check "SSL Certificate Status"
+# 4. If expired, regenerate certificate
+
+# Option 3: Use HTTP for internal communication
+# Set environment variable in Coolify:
+# FLASK_FORCE_HTTPS=false
+
+# Option 4: Configure Cloudflare SSL
+# In Cloudflare Dashboard:
+# 1. Go to SSL/TLS settings
+# 2. Set SSL mode to "Flexible" or "Full"
+# 3. Disable "Always Use HTTPS" temporarily
+
+# Environment Variables to add in Coolify:
+environment:
+  FLASK_ENV: production
+  PORT: 5000
+  FLASK_FORCE_HTTPS: false
+  SSL_DISABLE: true
+
+# Docker configuration for SSL bypass
+docker:
+  expose:
+    - "5000"
+  environment:
+    - PYTHONUNBUFFERED=1
+    - FLASK_RUN_HOST=0.0.0.0
+    - FLASK_RUN_PORT=5000
+
+# Health check configuration
+healthcheck:
+  path: "/api/v1/health"
+  port: 5000
+  protocol: "http"  # Use HTTP for health checks
+  interval: 30
+  timeout: 10
+  retries: 3
+
