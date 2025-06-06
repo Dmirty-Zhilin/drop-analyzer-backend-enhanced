@@ -1,0 +1,24 @@
+# Конфигурация для Coolify
+# Этот файл поможет Coolify автоматически определить настройки
+
+# Build configuration
+build:
+  command: "pip install -r requirements.txt"
+  
+# Start configuration  
+start:
+  command: "python src/main.py"
+  
+# Health check
+health:
+  path: "/api/v1/health"
+  port: 5000
+  
+# Environment
+env:
+  - DATABASE_URL
+  - SECRET_KEY
+  - JWT_SECRET_KEY
+  - FLASK_ENV=production
+  - FLASK_DEBUG=False
+

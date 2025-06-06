@@ -1,13 +1,11 @@
-# Dockerfile для Drop Analyzer Backend
-# Оптимизированный для Coolify
-
 FROM python:3.11-slim
 
-# Установка системных зависимостей
+# Установка системных зависимостей для MySQL
 RUN apt-get update && apt-get install -y \
     gcc \
     default-libmysqlclient-dev \
     pkg-config \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Создание рабочей директории
