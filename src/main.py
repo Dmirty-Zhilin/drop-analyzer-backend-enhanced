@@ -104,10 +104,19 @@ def require_role(role):
 # Health check endpoint
 @app.route('/api/v1/health')
 def health_check():
+    try:
+        # Проверка подключения к базе данных
+        db.session.execute('SELECT 1')
+        db_status = 'connected'
+    except Exception as e:
+        db_status = f'error: {str(e)}'
+    
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.utcnow().isoformat(),
-        'version': '1.0.0'
+        'version': '1.0.0',
+        'database': db_status,
+        'environment': os.getenv('FLASK_ENV', 'development')
     })
 
 # API documentation endpoint
@@ -163,21 +172,31 @@ def serve(path):
 
 # Create database tables
 with app.app_context():
-    db.create_all()
-    
-    # Create default admin user if not exists
-    admin_user = User.query.filter_by(email='admin@dropanalyzer.com').first()
-    if not admin_user:
-        admin_user = User(
-            username='admin',
-            email='admin@dropanalyzer.com',
-            role='admin'
-        )
-        admin_user.set_password('admin123')  # Change this in production!
-        db.session.add(admin_user)
-        db.session.commit()
-        print("Default admin user created: admin@dropanalyzer.com / admin123")
+    try:
+        db.create_all()
+        
+        # Create default admin user if not exists
+        admin_user = User.query.filter_by(email='admin@dropanalyzer.com').first()
+        if not admin_user:
+            admin_user = User(
+                username='admin',
+                email='admin@dropanalyzer.com',
+                role='admin'
+            )
+            admin_user.set_password('admin123')  # Change this in production!
+            db.session.add(admin_user)
+            db.session.commit()
+            print("Default admin user created: admin@dropanalyzer.com / admin123")
+    except Exception as e:
+        print(f"Database initialization error: {e}")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Production-ready settings
+    debug_mode = os.getenv('FLASK_ENV') == 'development'
+    app.run(
+        host='0.0.0.0', 
+        port=int(os.getenv('PORT', 5000)), 
+        debug=debug_mode,
+        threaded=True
+    )
 
