@@ -39,6 +39,7 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 # Database configuration
 database_url = os.getenv('DATABASE_URL')
 if database_url:
+    # Исправление: Используем строку напрямую, без попытки вызвать .get()
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
     # Fallback to MySQL configuration for Coolify
@@ -194,6 +195,9 @@ with app.app_context():
             print("Default admin user created: admin@dropanalyzer.com / admin123")
     except Exception as e:
         print(f"Database initialization error: {e}")
+        # Добавляем подробный вывод ошибки для отладки
+        import traceback
+        traceback.print_exc()
 
 if __name__ == '__main__':
     # Production-ready settings
