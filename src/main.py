@@ -129,6 +129,16 @@ def health_check():
         'environment': os.getenv('FLASK_ENV', 'development')
     })
 
+# Простой root endpoint для тестирования (как в старом бекенде)
+@app.route('/')
+def root():
+    return jsonify({
+        'message': 'Welcome to Drop Analyzer API',
+        'status': 'running',
+        'version': '1.0.0',
+        'timestamp': datetime.utcnow().isoformat()
+    })
+
 # Тестовый endpoint для проверки CORS
 @app.route('/api/v1/cors-test', methods=['GET', 'OPTIONS'])
 def cors_test():
