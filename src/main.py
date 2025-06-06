@@ -56,12 +56,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
+
+# Настройка CORS с указанием конкретных доменов
 CORS(app, origins=[
-    "https://qo8k8k0c48sk080ccwgswocg.alettidesign.ru",
+    "https://hwow4400wgowwss8wg8wsgss.alettidesign.ru",  # Фронтенд
+    "https://qo8k8k0c48sk080ccwgswocg.alettidesign.ru",  # Старый фронтенд
     "http://localhost:3000",  # для разработки
     "http://localhost:5173",  # для Vite dev server
     "http://localhost:5000"   # для локального тестирования
-])
+], supports_credentials=True)  # Добавлен supports_credentials для работы с куками и авторизацией
 
 # Register blueprints
 app.register_blueprint(user_bp, url_prefix='/api/v1/auth')
@@ -122,6 +125,15 @@ def health_check():
         'version': '1.0.0',
         'database': db_status,
         'environment': os.getenv('FLASK_ENV', 'development')
+    })
+
+# Тестовый endpoint для проверки CORS
+@app.route('/api/v1/cors-test', methods=['GET', 'OPTIONS'])
+def cors_test():
+    return jsonify({
+        'status': 'success',
+        'message': 'CORS is working correctly',
+        'timestamp': datetime.utcnow().isoformat()
     })
 
 # API documentation endpoint
