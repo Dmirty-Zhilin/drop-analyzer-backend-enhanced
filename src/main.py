@@ -59,12 +59,14 @@ jwt = JWTManager(app)
 
 # Настройка CORS с указанием конкретных доменов
 CORS(app, origins=[
-    "https://hwow4400wgowwss8wg8wsgss.alettidesign.ru",  # Фронтенд
-    "https://qo8k8k0c48sk080ccwgswocg.alettidesign.ru",  # Старый фронтенд
+    "https://hwow4400wgowwss8wg8wsgss.alettidesign.ru",  # Текущий фронтенд
+    "https://qo8k8k0c48sk080ccwgswocg.alettidesign.ru",  # Старый фронтенд (если используется)
     "http://localhost:3000",  # для разработки
     "http://localhost:5173",  # для Vite dev server
     "http://localhost:5000"   # для локального тестирования
-], supports_credentials=True)  # Добавлен supports_credentials для работы с куками и авторизацией
+], supports_credentials=True, 
+   methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+   allow_headers=['Content-Type', 'Authorization', 'X-Requested-With'])
 
 # Register blueprints
 app.register_blueprint(user_bp, url_prefix='/api/v1/auth')
